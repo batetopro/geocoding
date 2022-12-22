@@ -25,7 +25,23 @@ class AddressReader:
         return self._data
 
     def read(self):
-        return []
+        line_count = 0
+        data = []
+
+        with open(self.input_file, encoding="utf-8") as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            for row in csv_reader:
+                line_count += 1
+
+                if line_count == 1:
+                    continue
+
+                data.append(Address(
+                    owner=row[0],
+                    value=row[1]
+                ))
+
+        return data
 
 
 class StackedAddressesWriter:

@@ -9,7 +9,7 @@ import unittest
 from geocoding import geocoding
 
 
-BASE_DIR = os.path.basename(os.path.basename(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 class Settings:
@@ -30,3 +30,8 @@ class TestGeocoding(unittest.TestCase):
     def test_001_address_reader(self):
         reader = geocoding.AddressReader(Settings.input_file)
         self.assertEqual(len(reader.data), 6)
+        
+        address = reader.data[0]
+        self.assertEqual(address.owner, 'Ivan Draganov')
+        self.assertEqual(address.value, 'ul. Shipka 34, 1000 Sofia, Bulgaria')
+
