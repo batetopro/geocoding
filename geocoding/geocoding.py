@@ -3,6 +3,10 @@ import csv
 from dataclasses import dataclass
 
 
+import requests
+import geocoder
+
+
 @dataclass(frozen=True)
 class Address:
     owner: str
@@ -59,10 +63,16 @@ class StackedAddressesWriter:
 
 class AddressGeocoder:
     def __init__(self):
-        pass
+        self._session = requests.Session()
+
+    def __del__(self):
+        self._session.close()
 
     def encode(self, address):
-        return None
+        encoded = geocoder.bing(address, session=self._session)
+        lat = round(encoded.latlng[0] * 10000) / 10000
+        lng = round(encoded.latlng[1] * 10000) / 10000
+        return lat, lng
 
 
 class AddressStacker:

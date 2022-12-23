@@ -30,8 +30,15 @@ class TestGeocoding(unittest.TestCase):
     def test_001_address_reader(self):
         reader = geocoding.AddressReader(Settings.input_file)
         self.assertEqual(len(reader.data), 6)
-        
+
         address = reader.data[0]
         self.assertEqual(address.owner, 'Ivan Draganov')
         self.assertEqual(address.value, 'ul. Shipka 34, 1000 Sofia, Bulgaria')
 
+    def test_002_geocoder(self):
+        geocoder = geocoding.AddressGeocoder()
+        latlng1 = geocoder.encode("ул. Шипка 34, София, България")
+        latlng2 = geocoder.encode("ul. Shipka 34, 1000 Sofia, Bulgaria")
+        latlng3 = geocoder.encode("Shipka Street 34, Sofia, Bulgaria")
+        self.assertEqual(latlng1, latlng2)
+        self.assertEqual(latlng2, latlng3)
