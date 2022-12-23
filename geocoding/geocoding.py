@@ -28,7 +28,8 @@ class AddressReader:
         line_count = 0
         data = []
 
-        with open(self.input_file, encoding="utf-8") as csv_file:
+        # TODO: handle with BOM with encoding="utf-8-sig", but the first line is skipped, so it is not important
+        with open(self.input_file, mode='r', encoding="utf-8") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 line_count += 1
