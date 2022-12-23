@@ -58,7 +58,12 @@ class StackedAddressesWriter:
         return self._output_file
 
     def write(self, data):
-        pass
+        lines = []
+        for row in data.values():
+            lines.append(", ".join(sorted(row)) + "\n")
+
+        with open(self._output_file, "w", encoding="utf-8") as file:
+            file.writelines(sorted(lines))
 
 
 class AddressGeocoder:
@@ -78,7 +83,7 @@ class AddressGeocoder:
 class AddressStacker:
     def __init__(self, input_file, output_file, geocoder=None):
         self._input_reader = AddressReader(input_file)
-        self._output_writer = output_file
+        self._output_writer = StackedAddressesWriter(output_file)
         self._geocoder = geocoder
 
     @property

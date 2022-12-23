@@ -5,6 +5,8 @@
 
 import os
 import unittest
+import filecmp
+
 
 from geocoding import geocoding
 
@@ -42,3 +44,25 @@ class TestGeocoding(unittest.TestCase):
         latlng3 = geocoder.encode("Shipka Street 34, Sofia, Bulgaria")
         self.assertEqual(latlng1, latlng2)
         self.assertEqual(latlng2, latlng3)
+
+    def test_003_stacked_writer(self):
+        data = {
+            'x': ['Ivan Draganov', 'Ilona Ilieva', 'Dragan Doichinov'],
+            'y': ['Li Deng', 'Leon Wu'],
+            'z': ['Frieda Müller'],
+        }
+
+        writer = geocoding.StackedAddressesWriter(Settings.output_file)
+        writer.write(data)
+
+        self.assertTrue(filecmp.cmp(Settings.output_file, Settings.expected_output_file))
+
+    def test_004_stacker(self):
+        stacker = geocoding.AddressStacker(
+            input_file=Settings.input_file,
+            output_file=Settings.output_file
+        )
+
+        stacker.stack_addresses()
+
+        self.assertTrue(filecmp.cmp(Settings.output_file, Settings.expected_output_file))
