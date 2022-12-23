@@ -29,21 +29,26 @@ class TestGeocoding(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
-    def test_001_address_reader(self):
-        reader = geocoding.AddressReader(Settings.input_file)
+    def test_001_csv_reader(self):
+        reader = geocoding.CsvReader(Settings.input_file)
         self.assertEqual(len(reader.data), 6)
 
         address = reader.data[0]
         self.assertEqual(address.owner, 'Ivan Draganov')
-        self.assertEqual(address.value, 'ul. Shipka 34, 1000 Sofia, Bulgaria')
+        self.assertEqual(address.address, 'ul. Shipka 34, 1000 Sofia, Bulgaria')
 
     def test_002_geocoder(self):
+        data = [
+            geocoding.AddressRow(owner="Ilona Ilieva", address="ул. Шипка 34, София, България"),
+            geocoding.AddressRow(owner="Ivan Draganov", address="ul. Shipka 34, 1000 Sofia, Bulgaria"),
+            geocoding.AddressRow(owner="Dragan Doichinov", address="Shipka Street 34, Sofia, Bulgaria"),
+        ]
+
         geocoder = geocoding.AddressGeocoder()
-        latlng1 = geocoder.encode("ул. Шипка 34, София, България")
-        latlng2 = geocoder.encode("ul. Shipka 34, 1000 Sofia, Bulgaria")
-        latlng3 = geocoder.encode("Shipka Street 34, Sofia, Bulgaria")
-        self.assertEqual(latlng1, latlng2)
-        self.assertEqual(latlng2, latlng3)
+        geocoder.encode(data)
+
+        self.assertEqual(data[1].lat, data[2].lat)
+        self.assertEqual(data[1].lng, data[2].lng)
 
     def test_003_stacked_writer(self):
         data = {
@@ -52,17 +57,36 @@ class TestGeocoding(unittest.TestCase):
             'z': ['Frieda Müller'],
         }
 
-        writer = geocoding.StackedAddressesWriter(Settings.output_file)
+        writer = geocoding.CsvWriter(Settings.output_file)
         writer.write(data)
 
         self.assertTrue(filecmp.cmp(Settings.output_file, Settings.expected_output_file))
 
-    def test_004_stacker(self):
-        stacker = geocoding.AddressStacker(
+    def test_004_dict_stacker(self):
+        pass
+
+    def test_005_distance_stacker(self):
+        pass
+
+    def test_006_address_manager(self):
+        manager = geocoding.AddressManager(
             input_file=Settings.input_file,
             output_file=Settings.output_file
         )
 
-        stacker.stack_addresses()
+        manager.run()
 
         self.assertTrue(filecmp.cmp(Settings.output_file, Settings.expected_output_file))
+
+    """
+    def test_007_address_manager_distance(self):
+        manager = geocoding.AddressManager(
+            input_file=Settings.input_file,
+            output_file=Settings.output_file,
+            stacker=geocoding.DistanceStacker()
+        )
+
+        manager.run()
+
+        self.assertTrue(filecmp.cmp(Settings.output_file, Settings.expected_output_file))
+    """
