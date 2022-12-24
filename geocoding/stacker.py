@@ -38,14 +38,29 @@ class DistanceStacker:
 
     @classmethod
     def stack(cls, data):
+        distance_matrix = create_distance_matrix(data, cls.distance)
+        cluster_matrix = [None for _ in data]
+        current_cluster = 0
+
+        for vertex in range(len(data)):
+            queue = [vertex]
+            while len(queue) > 0:
+                source = queue.pop(0)
+                if cluster_matrix[source] is not None:
+                    continue
+                cluster_matrix[source] = current_cluster
+                for target in range(len(data)):
+                    if distance_matrix[source][target] < MAX_CLUSTER_DISTANCE:
+                        queue.append(target)
+            current_cluster += 1
+
         result = {}
-        m = []
-        for i in range(len(data)):
-            m.append([])
-            for j in range(len(data)):
-                m[i].append(cls.distance(data[i], data[j]))
-
-        print(m)
-
+        for row_index, cluster in enumerate(cluster_matrix):
+            if cluster not in result:
+                result[cluster] = []
+            result[cluster].append(data[row_index].owner)
         return result
 
+
+def create_distance_matrix(data, func):
+    return [[func(item_1, item_2) for item_2 in data] for item_1 in data]
