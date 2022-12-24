@@ -18,11 +18,9 @@ class AddressGeocoder:
         self._session.close()
 
     def encode(self, rows):
-        addresses = [r.address for r in rows]
-        lookup = geocoder.bing(addresses, session=self._session, method='batch')
-        for k, r in enumerate(lookup):
-            rows[k].set_latlng(r.latlng)
-        return rows
+        for k, row in enumerate(rows):
+            g = geocoder.bing(row.address, session=self._session)
+            rows[k].set_latlng(g.latlng)
 
 
 class AddressManager:
