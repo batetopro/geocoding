@@ -1,11 +1,11 @@
 
 
 class AddressRow:
-    def __init__(self, owner, address):
+    def __init__(self, owner, address, lat=None, lng=None):
         self._owner = owner
         self._address = address
-        self._lat = None
-        self._lng = None
+        self._lat = lat
+        self._lng = lng
 
     @property
     def owner(self):

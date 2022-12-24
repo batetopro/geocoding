@@ -50,7 +50,7 @@ class TestGeocoding(unittest.TestCase):
         self.assertEqual(data[1].lat, data[2].lat)
         self.assertEqual(data[1].lng, data[2].lng)
 
-    def test_003_stacked_writer(self):
+    def test_003_csv_writer(self):
         data = {
             'x': ['Ivan Draganov', 'Ilona Ilieva', 'Dragan Doichinov'],
             'y': ['Li Deng', 'Leon Wu'],
@@ -63,7 +63,17 @@ class TestGeocoding(unittest.TestCase):
         self.assertTrue(filecmp.cmp(Settings.output_file, Settings.expected_output_file))
 
     def test_004_dict_stacker(self):
-        pass
+        data = [
+            geocoding.AddressRow(owner="Ilona Ilieva",
+                                 address="ул. Шипка 34, София, България", lat=42.6929848, lng=23.340067),
+            geocoding.AddressRow(owner="Ivan Draganov",
+                                 address="ul. Shipka 34, 1000 Sofia, Bulgaria", lat=42.69299, lng=23.34007),
+            geocoding.AddressRow(owner="Dragan Doichinov",
+                                 address="Shipka Street 34, Sofia, Bulgaria", lat=42.69299, lng=23.34007),
+        ]
+        stacker = geocoding.DictStacker()
+        stacked = stacker.stack(data)
+        self.assertEqual(len(stacked), 1)
 
     def test_005_distance_stacker(self):
         pass
