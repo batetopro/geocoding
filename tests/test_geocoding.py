@@ -57,7 +57,7 @@ class TestGeocoding(unittest.TestCase):
             'z': ['Frieda Müller'],
         }
 
-        writer = geocoding.CsvWriter(Settings.output_file)
+        writer = geocoding.AddressGroupsWriter(Settings.output_file)
         writer.write(data)
 
         self.assertTrue(filecmp.cmp(Settings.output_file, Settings.expected_output_file))

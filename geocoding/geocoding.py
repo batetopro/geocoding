@@ -6,7 +6,7 @@ import geocoder
 
 
 from .models import AddressRow
-from .readwrite import CsvReader, CsvWriter
+from .readwrite import CsvReader, AddressGroupsWriter
 from .stacker import DictStacker, DistanceStacker
 
 
@@ -26,7 +26,7 @@ class AddressGeocoder:
 class AddressManager:
     def __init__(self, input_file, output_file, geo_encoder=None, stacker=None):
         self._input_reader = CsvReader(input_file)
-        self._output_writer = CsvWriter(output_file)
+        self._output_writer = AddressGroupsWriter(output_file)
         self._geocoder = geo_encoder
         self._stacker = stacker
 

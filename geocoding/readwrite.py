@@ -40,7 +40,7 @@ class CsvReader:
         return data
 
 
-class CsvWriter:
+class AddressGroupsWriter:
     def __init__(self, output_file):
         self._output_file = output_file
 
