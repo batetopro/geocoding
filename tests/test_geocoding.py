@@ -50,7 +50,7 @@ class TestGeocoding(unittest.TestCase):
         self.assertEqual(data[1].lat, data[2].lat)
         self.assertEqual(data[1].lng, data[2].lng)
 
-    def test_003_csv_writer(self):
+    def test_003_address_groups_writer(self):
         data = {
             'x': ['Ivan Draganov', 'Ilona Ilieva', 'Dragan Doichinov'],
             'y': ['Li Deng', 'Leon Wu'],
