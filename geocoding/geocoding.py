@@ -10,6 +10,13 @@ from .readwrite import CsvReader, AddressGroupsWriter
 from .stacker import DictStacker, DistanceStacker
 
 
+def main():
+    input_file = input("Input file: ")
+    output_file = input("Output file: ")
+    manager = AddressManager(input_file, output_file, stacker=DistanceStacker())
+    manager.run()
+
+
 class AddressGeocoder:
     def __init__(self):
         self._session = requests.Session()
