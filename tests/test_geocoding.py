@@ -67,7 +67,7 @@ class TestGeocoding(unittest.TestCase):
 
         self.assertTrue(filecmp.cmp(Settings.output_file, Settings.expected_output_file))
 
-    def test_004_dict_stacker(self):
+    def test_004_dict_group_matcher(self):
         data = [
             geocoding.AddressRow(owner="Ilona Ilieva",
                                  address="ул. Шипка 34, София, България", lat=42.6929848, lng=23.340067),
@@ -77,11 +77,11 @@ class TestGeocoding(unittest.TestCase):
                                  address="Shipka Street 34, Sofia, Bulgaria", lat=42.69299, lng=23.34007),
             geocoding.AddressRow(owner="Dragomir Petkanov", address="metallica", lat=None, lng=None),
         ]
-        stacker = geocoding.DictStacker()
-        stacked = stacker.stack(data)
+        stacker = geocoding.DictGroupMatcher()
+        stacked = stacker.group(data)
         self.assertEqual(len(stacked), 2)
 
-    def test_005_distance_stacker(self):
+    def test_005_distance_group_matcher(self):
         data = [
             geocoding.AddressRow(owner="Ilona Ilieva",
                                  address="ул. Шипка 34, София, България", lat=42.6929848, lng=23.340067),
@@ -91,10 +91,10 @@ class TestGeocoding(unittest.TestCase):
                                  address="Shipka Street 34, Sofia, Bulgaria", lat=42.69299, lng=23.34007),
             geocoding.AddressRow(owner="Dragomir Petkanov", address="metallica", lat=None, lng=None),
         ]
-        stacker = geocoding.DistanceStacker()
+        stacker = geocoding.DistanceGroupMatcher()
         self.assertEqual(1, round(stacker.distance(data[0], data[1])))
         self.assertEqual(0, stacker.distance(data[1], data[2]))
-        stacked = stacker.stack(data)
+        stacked = stacker.group(data)
         self.assertEqual(len(stacked), 2)
 
     def test_006_address_manager(self):
@@ -111,7 +111,7 @@ class TestGeocoding(unittest.TestCase):
         manager = geocoding.AddressManager(
             input_file=Settings.input_file,
             output_file=Settings.output_file,
-            stacker=geocoding.DistanceStacker()
+            stacker=geocoding.DistanceGroupMatcher()
         )
 
         manager.run()

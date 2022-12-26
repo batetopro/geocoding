@@ -7,13 +7,13 @@ import geocoder
 
 from .models import AddressRow
 from .readwrite import CsvReader, AddressGroupsWriter
-from .stacker import DictStacker, DistanceStacker
+from .group_matcher import DictGroupMatcher, DistanceGroupMatcher
 
 
 def main():
     input_file = input("Input file: ")
     output_file = input("Output file: ")
-    manager = AddressManager(input_file, output_file, stacker=DistanceStacker())
+    manager = AddressManager(input_file, output_file, stacker=DistanceGroupMatcher())
     manager.run()
 
 
@@ -58,10 +58,10 @@ class AddressManager:
     @property
     def stacker(self):
         if self._stacker is None:
-            self._stacker = DictStacker()
+            self._stacker = DictGroupMatcher()
         return self._stacker
 
     def run(self):
         data = self.reader.read()
         self.geocoder.encode(data)
-        self.writer.write(self.stacker.stack(data))
+        self.writer.write(self.stacker.group(data))
