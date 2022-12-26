@@ -29,24 +29,49 @@ Frieda Müller \
 Leon Wu, Li Deng 
 
 ## Installation
-1. git clone
-2. make a virtualenv
-3. python setup.py install
-4. setup a bing api key
-5. set bing api key as local env
-6. run tests
+Git clone the repository
+```commandline
+git clone git@github.com:batetopro/geocoding.git
+```
+Optionally, create a new virtualenv:
+```commandline
+python3 -m venv venv
+source venv/bin/activate
+```
+After that, go to the folder, in which the repository was cloned.
+Install the package:
+```commandline
+python setup.py install
+```
 
-## Run
-get run.py and how it works
+Next, go to [bing maps site](https://www.bingmapsportal.com/Application) and create a new API key for this application.
+Then, click on ``Show key`` to get the value of the key.
 
+  ![bing maps api key](https://github.com/batetopro/geocoding/blob/main/img/map_keys.png?raw=true)
+
+set the api key as local environment variable:
+```commandline
+export BING_API_KEY=<Secret API Key>
+```
+
+Run the main script of the package:
+```commandline
+python -m geocoding
+```
 
 ## Package artifacts
-Image from pynsource
 
-1. Address manager
-2. Address row
-3. CsvReader
-4. AddressGeocoder 
-5. DictStacker
-6. DistanceStacker
-7. AddressGroupsWriter
+  ![Class diagram](https://github.com/batetopro/geocoding/blob/main/img/class_diagram.png?raw=true)
+
+* AddressManager - its constructor takes *input_path* and *output_path*. 
+   It's *run* method orchestrates the whole process of reading the input file,
+   doing the geocoding, group matching and output file writing.
+* AddressRow - this is the model class. It has owner and address. 
+   It also can have lat and lng.
+* CsvReader - reads the input file and provides a list of AddressRow with owner and address.
+* AddressGeocoder - takes a list of AddressRow and extends the rows by doing 
+   calls to Bing to geocode the address and set the lat and lng of the row.
+* DictGroupMatcher - groups addresses by their lat and lng, while using the keys of a dictionary. 
+* DistanceGroupMatcher- groups addresses by their lat and lng, while using the distance between the points.
+* AddressGroupsWriter - sorts the groups data and saves it to the output file.
+
