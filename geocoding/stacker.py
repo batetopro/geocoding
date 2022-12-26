@@ -11,13 +11,16 @@ class DictStacker:
     def stack(cls, data):
         result = {}
         for row in data:
-            latlng = (
-                round(row.lat * ROUND_DICT_STACKER) / ROUND_DICT_STACKER,
-                round(row.lng * ROUND_DICT_STACKER) / ROUND_DICT_STACKER
-            )
-            if latlng not in result:
-                result[latlng] = []
-            result[latlng].append(row.owner)
+            if row.lat is None and row.lng is None:
+                key = "NONE"
+            else:
+                key = (
+                    round(row.lat * ROUND_DICT_STACKER) / ROUND_DICT_STACKER,
+                    round(row.lng * ROUND_DICT_STACKER) / ROUND_DICT_STACKER
+                )
+            if key not in result:
+                result[key] = []
+            result[key].append(row.owner)
         return result
 
 
@@ -38,27 +41,37 @@ class DistanceStacker:
 
     @classmethod
     def stack(cls, data):
-        distance_matrix = create_distance_matrix(data, cls.distance)
-        cluster_matrix = [None for _ in data]
+        result = {}
+        vertices = []
+
+        for row in data:
+            if row.lat is None and row.lng is None:
+                if "NONE" not in result:
+                    result["NONE"] = []
+                result["NONE"].append(row.owner)
+            else:
+                vertices.append(row)
+
+        distance_matrix = create_distance_matrix(vertices, cls.distance)
+        cluster_matrix = [None for _ in vertices]
         current_cluster = 0
 
-        for vertex in range(len(data)):
+        for vertex in range(len(vertices)):
             queue = [vertex]
             while len(queue) > 0:
                 source = queue.pop(0)
                 if cluster_matrix[source] is not None:
                     continue
                 cluster_matrix[source] = current_cluster
-                for target in range(len(data)):
+                for target in range(len(vertices)):
                     if distance_matrix[source][target] < MAX_CLUSTER_DISTANCE:
                         queue.append(target)
             current_cluster += 1
 
-        result = {}
         for row_index, cluster in enumerate(cluster_matrix):
             if cluster not in result:
                 result[cluster] = []
-            result[cluster].append(data[row_index].owner)
+            result[cluster].append(vertices[row_index].owner)
         return result
 
 

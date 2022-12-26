@@ -31,9 +31,11 @@ class TestGeocoding(unittest.TestCase):
 
     def test_001_csv_reader(self):
         reader = geocoding.CsvReader(Settings.input_file)
-        self.assertEqual(len(reader.data), 6)
+        data = reader.read()
 
-        address = reader.data[0]
+        self.assertEqual(len(data), 6)
+
+        address = data[0]
         self.assertEqual(address.owner, 'Ivan Draganov')
         self.assertEqual(address.address, 'ul. Shipka 34, 1000 Sofia, Bulgaria')
 
@@ -42,6 +44,7 @@ class TestGeocoding(unittest.TestCase):
             geocoding.AddressRow(owner="Ilona Ilieva", address="ул. Шипка 34, София, България"),
             geocoding.AddressRow(owner="Ivan Draganov", address="ul. Shipka 34, 1000 Sofia, Bulgaria"),
             geocoding.AddressRow(owner="Dragan Doichinov", address="Shipka Street 34, Sofia, Bulgaria"),
+            geocoding.AddressRow(owner="Dragomir Petkanov", address="metallica"),
         ]
 
         geocoder = geocoding.AddressGeocoder()
@@ -49,6 +52,8 @@ class TestGeocoding(unittest.TestCase):
 
         self.assertEqual(data[1].lat, data[2].lat)
         self.assertEqual(data[1].lng, data[2].lng)
+        self.assertIsNone(data[3].lat)
+        self.assertIsNone(data[3].lng)
 
     def test_003_address_groups_writer(self):
         data = {
@@ -70,10 +75,11 @@ class TestGeocoding(unittest.TestCase):
                                  address="ul. Shipka 34, 1000 Sofia, Bulgaria", lat=42.69299, lng=23.34007),
             geocoding.AddressRow(owner="Dragan Doichinov",
                                  address="Shipka Street 34, Sofia, Bulgaria", lat=42.69299, lng=23.34007),
+            geocoding.AddressRow(owner="Dragomir Petkanov", address="metallica", lat=None, lng=None),
         ]
         stacker = geocoding.DictStacker()
         stacked = stacker.stack(data)
-        self.assertEqual(len(stacked), 1)
+        self.assertEqual(len(stacked), 2)
 
     def test_005_distance_stacker(self):
         data = [
@@ -83,12 +89,13 @@ class TestGeocoding(unittest.TestCase):
                                  address="ul. Shipka 34, 1000 Sofia, Bulgaria", lat=42.69299, lng=23.34007),
             geocoding.AddressRow(owner="Dragan Doichinov",
                                  address="Shipka Street 34, Sofia, Bulgaria", lat=42.69299, lng=23.34007),
+            geocoding.AddressRow(owner="Dragomir Petkanov", address="metallica", lat=None, lng=None),
         ]
         stacker = geocoding.DistanceStacker()
         self.assertEqual(1, round(stacker.distance(data[0], data[1])))
         self.assertEqual(0, stacker.distance(data[1], data[2]))
         stacked = stacker.stack(data)
-        self.assertEqual(len(stacked), 1)
+        self.assertEqual(len(stacked), 2)
 
     def test_006_address_manager(self):
         manager = geocoding.AddressManager(

@@ -7,17 +7,10 @@ from .models import AddressRow
 class CsvReader:
     def __init__(self, input_file):
         self._input_file = input_file
-        self._data = None
 
     @property
     def input_file(self):
         return self._input_file
-
-    @property
-    def data(self):
-        if self._data is None:
-            self._data = self.read()
-        return self._data
 
     def read(self):
         line_count = 0

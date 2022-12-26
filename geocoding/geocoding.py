@@ -18,9 +18,13 @@ class AddressGeocoder:
         self._session.close()
 
     def encode(self, rows):
+        result = []
         for k, row in enumerate(rows):
             g = geocoder.bing(row.address, session=self._session)
-            rows[k].set_latlng(g.latlng)
+            if g.latlng:
+                row.set_latlng(g.latlng)
+            result.append(row)
+        return result
 
 
 class AddressManager:
@@ -51,5 +55,6 @@ class AddressManager:
         return self._stacker
 
     def run(self):
-        self.geocoder.encode(self.reader.data)
-        self.writer.write(self.stacker.stack(self.reader.data))
+        data = self.reader.read()
+        self.geocoder.encode(data)
+        self.writer.write(self.stacker.stack(data))
