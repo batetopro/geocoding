@@ -13,24 +13,12 @@ class CsvReader:
         return self._input_file
 
     def read(self):
-        line_count = 0
-        data = []
-
-        # TODO: handle with BOM with encoding="utf-8-sig", but the first line is skipped, so it is not important
-        with open(self.input_file, mode='r', encoding="utf-8") as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
+        result = []
+        with open(self.input_file, mode='r', encoding="utf-8-sig") as csv_file:
+            csv_reader = csv.DictReader(csv_file, delimiter=',')
             for row in csv_reader:
-                line_count += 1
-
-                if line_count == 1:
-                    continue
-
-                data.append(AddressRow(
-                    owner=row[0],
-                    address=row[1]
-                ))
-
-        return data
+                result.append(AddressRow(owner=row["Name"], address=row["Address"]))
+        return result
 
 
 class AddressGroupsWriter:
