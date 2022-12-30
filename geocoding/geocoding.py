@@ -13,7 +13,7 @@ from .group_matcher import DictGroupMatcher, DistanceGroupMatcher
 def main():
     input_file = input("Input file: ")
     output_file = input("Output file: ")
-    manager = AddressManager(input_file, output_file, stacker=DistanceGroupMatcher())
+    manager = AddressManager(input_file, output_file, group_matcher=DistanceGroupMatcher())
     manager.run()
 
 
@@ -35,11 +35,11 @@ class AddressGeocoder:
 
 
 class AddressManager:
-    def __init__(self, input_file, output_file, geo_encoder=None, stacker=None):
+    def __init__(self, input_file, output_file, geo_encoder=None, group_matcher=None):
         self._input_reader = CsvReader(input_file)
         self._output_writer = AddressGroupsWriter(output_file)
         self._geocoder = geo_encoder
-        self._stacker = stacker
+        self._group_matcher = group_matcher
 
     @property
     def reader(self):
@@ -56,12 +56,12 @@ class AddressManager:
         return self._geocoder
 
     @property
-    def stacker(self):
-        if self._stacker is None:
-            self._stacker = DictGroupMatcher()
-        return self._stacker
+    def group_matcher(self):
+        if self._group_matcher is None:
+            self._group_matcher = DictGroupMatcher()
+        return self._group_matcher
 
     def run(self):
         data = self.reader.read()
         self.geocoder.encode(data)
-        self.writer.write(self.stacker.group(data))
+        self.writer.write(self.group_matcher.group(data))

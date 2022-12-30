@@ -111,7 +111,7 @@ class TestGeocoding(unittest.TestCase):
         manager = geocoding.AddressManager(
             input_file=Settings.input_file,
             output_file=Settings.output_file,
-            stacker=geocoding.DistanceGroupMatcher()
+            group_matcher=geocoding.DistanceGroupMatcher()
         )
 
         manager.run()
