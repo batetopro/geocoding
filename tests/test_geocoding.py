@@ -47,13 +47,25 @@ class TestGeocoding(unittest.TestCase):
             geocoding.AddressRow(owner="Dragomir Petkanov", address="metallica"),
         ]
 
-        geocoder = geocoding.AddressGeocoder()
+        geocoder = geocoding.BingAddressEncoder()
         geocoder.encode(data)
 
         self.assertEqual(data[1].lat, data[2].lat)
         self.assertEqual(data[1].lng, data[2].lng)
         self.assertIsNone(data[3].lat)
         self.assertIsNone(data[3].lng)
+
+    def test_002_1_geocoder(self):
+        data = [
+            geocoding.AddressRow(owner="Ilona Ilieva", address="ул. Шипка 34, София, България"),
+            geocoding.AddressRow(owner="Ivan Draganov", address="ul. Shipka 34, 1000 Sofia, Bulgaria"),
+        ]
+
+        geocoder = geocoding.LocationIQAddressEncoder()
+        geocoder.encode(data)
+
+        self.assertEqual(data[1].lat, data[0].lat)
+        self.assertEqual(data[1].lng, data[0].lng)
 
     def test_003_address_groups_writer(self):
         data = {
@@ -100,7 +112,8 @@ class TestGeocoding(unittest.TestCase):
     def test_006_address_manager(self):
         manager = geocoding.AddressManager(
             input_file=Settings.input_file,
-            output_file=Settings.output_file
+            output_file=Settings.output_file,
+            geo_encoder=geocoding.DummyAddressEncoder(),
         )
 
         manager.run()
@@ -111,6 +124,7 @@ class TestGeocoding(unittest.TestCase):
         manager = geocoding.AddressManager(
             input_file=Settings.input_file,
             output_file=Settings.output_file,
+            geo_encoder=geocoding.DummyAddressEncoder(),
             group_matcher=geocoding.DistanceGroupMatcher()
         )
 

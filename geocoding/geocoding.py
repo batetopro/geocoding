@@ -24,14 +24,41 @@ class AddressGeocoder:
     def __del__(self):
         self._session.close()
 
+    def lookup(self, address):
+        raise NotImplemented()
+
     def encode(self, rows):
         result = []
         for k, row in enumerate(rows):
-            g = geocoder.bing(row.address, session=self._session)
-            if g.latlng:
-                row.set_latlng(g.latlng)
+            latlng = self.lookup(row.address)
+            if latlng:
+                row.set_latlng(latlng)
             result.append(row)
         return result
+
+
+class DummyAddressEncoder(AddressGeocoder):
+    mapping = {
+        "ul. Shipka 34, 1000 Sofia, Bulgaria": (42.69299, 23.34007),
+        "1 Guanghua Road, Beijing, China 100020": (39.91392, 116.46064),
+        "ул. Шипка 34, София, България": (42.6929848, 23.340067),
+        "Shipka Street 34, Sofia, Bulgaria": (42.69299, 23.34007),
+        "1 Guanghua Road, Chaoyang District, Beijing, P.R.C 100020": (39.91392, 116.46064),
+        "Konrad-Adenauer-Straße 7, 60313 Frankfurt am Main, Germany": (50.11568, 8.687338),
+    }
+
+    def lookup(self, address):
+        return self.mapping.get(address)
+
+
+class BingAddressEncoder(AddressGeocoder):
+    def lookup(self, address):
+        return geocoder.bing(address, session=self._session).latlng
+
+
+class LocationIQAddressEncoder(AddressGeocoder):
+    def lookup(self, address):
+        return geocoder.locationiq(address, session=self._session).latlng
 
 
 class AddressManager:
@@ -52,7 +79,7 @@ class AddressManager:
     @property
     def geocoder(self):
         if self._geocoder is None:
-            self._geocoder = AddressGeocoder()
+            self._geocoder = BingAddressEncoder()
         return self._geocoder
 
     @property
