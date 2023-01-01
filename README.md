@@ -70,8 +70,12 @@ python -m geocoding
    It also can have lat and lng.
 * CsvReader - reads the input file and provides a list of AddressRow with owner and address.
 * AddressGeocoder - takes a list of AddressRow and extends the rows by doing 
-   calls to Bing to geocode the address and set the lat and lng of the row.
-* DictGroupMatcher - groups addresses by their lat and lng, while using the keys of a dictionary. 
-* DistanceGroupMatcher- groups addresses by their lat and lng, while using the distance between the points.
+   lookups to geocode the address and set the lat and lng of the row.
+  * DummyAddressEncoder - for test purposes. Uses a dict mapping
+  * LocationIQAddressEncoder - calls to LocationIQ
+  * BingAddressEncoder - calls to Bing
+* AddressGroupMatcher - groups addresses by their lat and lng
+  * DictGroupMatcher - uses the keys of a dictionary. 
+  * DistanceGroupMatcher - uses the distance between the points.
 * AddressGroupsWriter - sorts the groups data and saves it to the output file.
 
