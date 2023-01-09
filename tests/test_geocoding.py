@@ -35,9 +35,9 @@ class TestGeocoding(unittest.TestCase):
 
         self.assertEqual(len(data), 6)
 
-        address = data[0]
-        self.assertEqual(address.owner, 'Ivan Draganov')
-        self.assertEqual(address.address, 'ul. Shipka 34, 1000 Sofia, Bulgaria')
+        row = data[0]
+        self.assertEqual(row.owner, 'Ivan Draganov')
+        self.assertEqual(row.address, 'ul. Shipka 34, 1000 Sofia, Bulgaria')
 
     def test_002_geocoder(self):
         data = [
@@ -89,9 +89,9 @@ class TestGeocoding(unittest.TestCase):
                                  address="Shipka Street 34, Sofia, Bulgaria", lat=42.69299, lng=23.34007),
             geocoding.AddressRow(owner="Dragomir Petkanov", address="metallica", lat=None, lng=None),
         ]
-        stacker = geocoding.DictGroupMatcher()
-        stacked = stacker.group(data)
-        self.assertEqual(len(stacked), 2)
+        group_matcher = geocoding.DictGroupMatcher()
+        grouped = group_matcher.group(data)
+        self.assertEqual(len(grouped), 2)
 
     def test_005_distance_group_matcher(self):
         data = [
@@ -103,11 +103,11 @@ class TestGeocoding(unittest.TestCase):
                                  address="Shipka Street 34, Sofia, Bulgaria", lat=42.69299, lng=23.34007),
             geocoding.AddressRow(owner="Dragomir Petkanov", address="metallica", lat=None, lng=None),
         ]
-        stacker = geocoding.DistanceGroupMatcher()
-        self.assertEqual(1, round(stacker.distance(data[0], data[1])))
-        self.assertEqual(0, stacker.distance(data[1], data[2]))
-        stacked = stacker.group(data)
-        self.assertEqual(len(stacked), 2)
+        group_matcher = geocoding.DistanceGroupMatcher()
+        self.assertEqual(1, round(group_matcher.distance(data[0], data[1])))
+        self.assertEqual(0, group_matcher.distance(data[1], data[2]))
+        grouped = group_matcher.group(data)
+        self.assertEqual(len(grouped), 2)
 
     def test_006_address_manager(self):
         manager = geocoding.AddressManager(
