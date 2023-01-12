@@ -35,17 +35,18 @@ git clone git@github.com:batetopro/geocoding.git
 ```
 Optionally, create a new virtualenv:
 ```commandline
-python3 -m venv venv
+python -m venv venv
 source venv/bin/activate
 ```
 After that, go to the folder, in which the repository was cloned.
 Install the package:
 ```commandline
+cd geocoding
 python setup.py install
 ```
-
+---
 Next, go to [bing maps site](https://www.bingmapsportal.com/Application) and create a new API key for this application.
-Then, click on ``Show key`` to get the value of the key.
+Then, click on ``Copy key`` to get the value of the key.
 
   ![bing maps api key](https://github.com/batetopro/geocoding/blob/main/img/map_keys.png?raw=true)
 
@@ -53,11 +54,20 @@ set the api key as local environment variable:
 ```commandline
 export BING_API_KEY=<Secret API Key>
 ```
-
+---
 Run the main script of the package:
 ```commandline
 python -m geocoding
 ```
+---
+To use the additional LocationIQ geo encoder, create an account in LocationIQ.
+After that, get an API Access Token from [here](https://my.locationiq.com/dashboard). 
+Click on ``Show token`` and then on the icon to select the whole API Access Token.
+Set the environment variable to use this value:
+```commandline
+export LOCATIONIQ_API_KEY=<Secret API Key>
+```
+Bear in mind, that the default Free Pricing plan has a limit of 2 requests per second.
 
 ## Package artifacts
 
