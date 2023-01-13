@@ -28,6 +28,27 @@ Germany”
 Frieda Müller \
 Leon Wu, Li Deng 
 
+## Architecture
+
+  ![architecture](https://github.com/batetopro/geocoding/blob/main/img/architecture.png?raw=true)
+
+1. Input Connector - retrieve data - this is on the physical layer. It can
+take as parameter from the file system, URL, cloud storage, stream, etc. The current implementation 
+of the parameter is file path.
+2. Reader - parses different formats to python structures. The input format can be
+csv, json, XML, etc. and the current format is csv.
+3. Transformer - it takes the input address and applies different transformations on it.
+They can be organized as pipeline of different steps. The normalizations can be:
+* Lexicographical NLP parsing
+* Machine learning
+* Geocoding (3rd party adapter)
+The output of this stage is location.
+4. Aggregator - combines the locations in different groups by using:
+* location dictionary
+* location distance
+5. Writer - convert to target format.
+6. Output connector - takes care of the physical storage.
+
 ## Installation
 Git clone the repository
 ```commandline
