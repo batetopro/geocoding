@@ -42,6 +42,7 @@ They can be organized as pipeline of different steps. The normalizations can be:
 * Lexicographical NLP parsing
 * Machine learning
 * Geocoding (3rd party adapter)
+
 The output of this stage is location.
 4. Aggregator - combines the locations in different groups by using:
 * location dictionary

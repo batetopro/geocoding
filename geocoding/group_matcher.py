@@ -53,13 +53,17 @@ class DistanceGroupMatcher(AddressGroupMatcher):
         current_cluster = 0
 
         for vertex in range(len(vertices)):
+            if cluster_matrix[vertex] is not None:
+                continue
+
             queue = [vertex]
             while len(queue) > 0:
                 source = queue.pop(0)
                 if cluster_matrix[source] is not None:
                     continue
                 cluster_matrix[source] = current_cluster
-                for target in range(len(vertices)):
+
+                for target in range(source, len(vertices)):
                     if distance_matrix[source][target] < MAX_CLUSTER_DISTANCE:
                         queue.append(target)
             current_cluster += 1
